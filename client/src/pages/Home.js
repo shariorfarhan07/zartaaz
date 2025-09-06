@@ -81,7 +81,7 @@ const Home = () => {
 
   const fetchFeaturedProducts = async () => {
     try {
-      const response = await axios.get('/api/products?featured=true&limit=8');
+      const response = await axios.get('/api/products?featured=true&limit=12');
       setFeaturedProducts(response.data.products || []);
     } catch (error) {
       console.error('Error fetching featured products:', error);
@@ -352,7 +352,7 @@ const Home = () => {
 
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[...Array(8)].map((_, index) => (
+              {[...Array(12)].map((_, index) => (
                 <div key={index} className="animate-pulse">
                   <div className="bg-gray-200 aspect-[3/4] rounded-lg mb-4"></div>
                   <div className="h-4 bg-gray-200 rounded mb-2"></div>
