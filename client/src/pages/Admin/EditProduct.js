@@ -468,77 +468,9 @@ const EditProduct = () => {
                       />
                     </div>
                   </div>
+                </div>
 
-                  {/* Shipping Information */}
-                  <div className="bg-gray-50 p-6 rounded-lg">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Shipping Information</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Shipping Charge ($)
-                        </label>
-                        <input
-                          type="number"
-                          name="shippingCharge"
-                          value={formData.shippingCharge}
-                          onChange={handleInputChange}
-                          step="0.01"
-                          min="0"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Free Shipping Threshold ($)
-                        </label>
-                        <input
-                          type="number"
-                          name="freeShippingThreshold"
-                          value={formData.freeShippingThreshold}
-                          onChange={handleInputChange}
-                          step="0.01"
-                          min="0"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Shipping Method
-                        </label>
-                        <select
-                          name="shippingMethod"
-                          value={formData.shippingMethod}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-                        >
-                          <option value="standard">Standard</option>
-                          <option value="express">Express</option>
-                          <option value="overnight">Overnight</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Estimated Delivery (Days)
-                        </label>
-                        <input
-                          type="number"
-                          name="estimatedDeliveryDays"
-                          value={formData.estimatedDeliveryDays}
-                          onChange={handleInputChange}
-                          min="1"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                    <div className="md:col-span-2 space-y-3">
+                <div className="md:col-span-2 space-y-3">
                       <label className="flex items-center">
                         <input
                           type="checkbox"
@@ -685,8 +617,9 @@ const EditProduct = () => {
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Sidebar */}
+            {/* Sidebar */}
               <div className="space-y-6">
                 {/* Product Images */}
                 <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
@@ -887,6 +820,75 @@ const EditProduct = () => {
                       Cancel
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Shipping Information */}
+            <div className="bg-gray-50 p-6 rounded-lg">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Shipping Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Shipping Charge ($)
+                  </label>
+                  <input
+                    type="number"
+                    name="shippingCharge"
+                    value={formData.shippingCharge}
+                    onChange={handleInputChange}
+                    step="0.01"
+                    min="0"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Free Shipping Threshold ($)
+                  </label>
+                  <input
+                    type="number"
+                    name="freeShippingThreshold"
+                    value={formData.freeShippingThreshold}
+                    onChange={handleInputChange}
+                    step="0.01"
+                    min="0"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Shipping Method
+                  </label>
+                  <select
+                    name="shippingMethod"
+                    value={formData.shippingMethod}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  >
+                    <option value="standard">Standard</option>
+                    <option value="express">Express</option>
+                    <option value="overnight">Overnight</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Estimated Delivery (Days)
+                  </label>
+                  <input
+                    type="number"
+                    name="estimatedDeliveryDays"
+                    value={formData.estimatedDeliveryDays}
+                    onChange={handleInputChange}
+                    min="1"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
+                    required
+                  />
                 </div>
               </div>
             </div>
