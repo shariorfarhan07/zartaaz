@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Mail, Code, Palette, User } from 'lucide-react';
+import { X, Mail, Code, Palette, User, Phone } from 'lucide-react';
 
 const DeveloperInfo = ({ onClose }) => {
   return (
@@ -41,6 +41,19 @@ const DeveloperInfo = ({ onClose }) => {
                 className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
               >
                 shariorfarhan07@gmail.com
+              </a>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <Phone className="h-5 w-5 text-orange-600" />
+            <div>
+              <p className="font-semibold text-gray-900">Phone</p>
+              <a 
+                href="tel:+8801749555777" 
+                className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                +880 1749 555 777
               </a>
             </div>
           </div>
