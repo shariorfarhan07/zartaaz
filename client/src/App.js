@@ -46,10 +46,10 @@ const Layout = ({ children }) => {
   const [showDeveloperInfo, setShowDeveloperInfo] = useState(false);
   const isAdminRoute = location.pathname.startsWith('/admin');
 
-  // Check for Dev=doneBy query parameter
+  // Check for developer=whoIsTheBoss query parameter
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('Dev') === 'doneBy') {
+    if (urlParams.get('developer') === 'whoIsTheBoss') {
       setShowDeveloperInfo(true);
     }
   }, []);
