@@ -151,6 +151,26 @@ const productSchema = new mongoose.Schema({
   seoDescription: {
     type: String,
     trim: true
+  },
+  shippingCharge: {
+    type: Number,
+    default: 10,
+    min: [0, 'Shipping charge cannot be negative']
+  },
+  freeShippingThreshold: {
+    type: Number,
+    default: 100,
+    min: [0, 'Free shipping threshold cannot be negative']
+  },
+  shippingMethod: {
+    type: String,
+    enum: ['standard', 'express', 'overnight'],
+    default: 'standard'
+  },
+  estimatedDeliveryDays: {
+    type: Number,
+    default: 3,
+    min: [1, 'Estimated delivery days must be at least 1']
   }
 }, {
   timestamps: true

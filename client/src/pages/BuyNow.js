@@ -101,7 +101,7 @@ const BuyNow = () => {
       }
 
       const subtotal = (product.discountPrice || product.salePrice || product.price) * quantity;
-      const shipping = subtotal > 100 ? 0 : 10;
+      const shipping = subtotal >= (product.freeShippingThreshold || 100) ? 0 : (product.shippingCharge || 10);
       const tax = subtotal * 0.08;
       const total = subtotal + shipping + tax;
 
@@ -191,7 +191,7 @@ const BuyNow = () => {
   }
 
   const subtotal = (product.discountPrice || product.salePrice || product.price) * quantity;
-  const shipping = subtotal > 100 ? 0 : 10;
+  const shipping = subtotal >= (product.freeShippingThreshold || 100) ? 0 : (product.shippingCharge || 10);
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 

@@ -132,7 +132,17 @@ const Checkout = () => {
   };
 
   const subtotal = getCartTotal();
-  const shipping = subtotal > 100 ? 0 : 10;
+  // Calculate shipping based on products in cart
+  const maxShippingCharge = items.reduce((max, item) => {
+    const productShipping = item.product.shippingCharge || 10;
+    return Math.max(max, productShipping);
+  }, 0);
+  const minFreeShippingThreshold = items.reduce((min, item) => {
+    const productThreshold = item.product.freeShippingThreshold || 100;
+    return Math.min(min, productThreshold);
+  }, 100);
+  
+  const shipping = subtotal >= minFreeShippingThreshold ? 0 : maxShippingCharge;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
 
