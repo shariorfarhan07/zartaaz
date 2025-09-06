@@ -365,8 +365,9 @@ const AdminCategories = () => {
                             className="h-12 w-12 object-cover rounded-lg"
                           />
                         ) : (
-                          <div className="h-12 w-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                            <ImageIcon className="h-6 w-6 text-gray-400" />
+                          <div className="h-12 w-12 bg-red-100 rounded-lg flex flex-col items-center justify-center border border-red-200">
+                            <ImageIcon className="h-4 w-4 text-red-400 mb-1" />
+                            <span className="text-xs text-red-600 font-medium">No Image</span>
                           </div>
                         )}
                       </td>
@@ -541,21 +542,133 @@ const AdminCategories = () => {
                   />
                 </div>
 
-                {/* Image */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Image Upload Section */}
+                <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Image URL
+                      Category Image
                     </label>
-                    <input
-                      type="url"
-                      name="image.url"
-                      value={formData.image.url}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-                      placeholder="https://example.com/image.jpg"
-                    />
+                    
+                    {/* Image Upload Area */}
+                    <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                      formData.image.url 
+                        ? 'border-green-300 bg-green-50' 
+                        : 'border-red-300 bg-red-50'
+                    }`}>
+                      {formData.image.url ? (
+                        <div className="space-y-4">
+                          <img
+                            src={formData.image.url}
+                            alt={formData.image.alt || formData.name}
+                            className="h-32 w-32 object-cover rounded-lg border border-gray-300 mx-auto"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                          <div className="flex justify-center space-x-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.accept = 'image/*';
+                                input.onchange = (e) => {
+                                  const file = e.target.files[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => {
+                                      setFormData(prev => ({
+                                        ...prev,
+                                        image: {
+                                          ...prev.image,
+                                          url: e.target.result
+                                        }
+                                      }));
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                };
+                                input.click();
+                              }}
+                              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                            >
+                              Change Image
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setFormData(prev => ({
+                                ...prev,
+                                image: { url: '', alt: '' }
+                              }))}
+                              className="px-4 py-2 text-sm font-medium text-red-700 bg-red-100 border border-red-300 rounded-lg hover:bg-red-200 transition-colors"
+                            >
+                              Remove Image
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="flex flex-col items-center">
+                            <ImageIcon className="h-12 w-12 text-gray-400 mb-2" />
+                            <p className="text-sm text-gray-600 mb-2">No image selected</p>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                              No Image
+                            </span>
+                          </div>
+                          <div className="flex justify-center space-x-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.accept = 'image/*';
+                                input.onchange = (e) => {
+                                  const file = e.target.files[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => {
+                                      setFormData(prev => ({
+                                        ...prev,
+                                        image: {
+                                          ...prev.image,
+                                          url: e.target.result
+                                        }
+                                      }));
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                };
+                                input.click();
+                              }}
+                              className="px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors"
+                            >
+                              Upload Image
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const url = prompt('Enter image URL:');
+                                if (url) {
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    image: {
+                                      ...prev.image,
+                                      url: url
+                                    }
+                                  }));
+                                }
+                              }}
+                              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                            >
+                              Add URL
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Image Alt Text */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Image Alt Text
@@ -566,27 +679,10 @@ const AdminCategories = () => {
                       value={formData.image.alt}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-                      placeholder="Alt text for image"
+                      placeholder="Alt text for image (for accessibility)"
                     />
                   </div>
                 </div>
-
-                {/* Image Preview */}
-                {formData.image.url && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Image Preview
-                    </label>
-                    <img
-                      src={formData.image.url}
-                      alt={formData.image.alt || formData.name}
-                      className="h-32 w-32 object-cover rounded-lg border border-gray-300"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Sort Order */}
