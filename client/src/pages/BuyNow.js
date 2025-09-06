@@ -7,11 +7,15 @@ import axios from 'axios';
 const BuyNow = () => {
   const { user, isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [product, setProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Get product data from navigation state
-  const { product, quantity = 1, selectedSize, selectedColor } = location.state || {};
+  // Get product data from navigation state or query parameter
+  const { product: stateProduct, quantity: stateQuantity = 1, selectedSize: stateSelectedSize, selectedColor: stateSelectedColor } = location.state || {};
 
   const [formData, setFormData] = useState({
     email: user?.email || '',
@@ -26,18 +30,60 @@ const BuyNow = () => {
   });
 
   useEffect(() => {
-    // Redirect if no product data
-    if (!product) {
-      toast.error('No product selected for purchase');
-      navigate('/products');
-    }
-  }, [product, navigate]);
+    const initializeProduct = async () => {
+      // Check if product is provided via navigation state
+      if (stateProduct) {
+        setProduct(stateProduct);
+        setQuantity(stateQuantity);
+        setSelectedSize(stateSelectedSize || stateProduct.sizes?.[0] || 'M');
+        setSelectedColor(stateSelectedColor || stateProduct.colors?.[0] || 'Default');
+        return;
+      }
+
+      // Check if product ID is provided via query parameter
+      const urlParams = new URLSearchParams(location.search);
+      const productId = urlParams.get('product');
+      
+      if (productId) {
+        try {
+          const response = await axios.get(`/api/products/${productId}`);
+          const productData = response.data.product;
+          setProduct(productData);
+          setQuantity(1);
+          setSelectedSize(productData.sizes?.[0] || 'M');
+          setSelectedColor(productData.colors?.[0] || 'Default');
+        } catch (error) {
+          console.error('Error fetching product:', error);
+          toast.error('Product not found');
+          navigate('/products');
+        }
+      } else {
+        toast.error('No product selected for purchase');
+        navigate('/products');
+      }
+    };
+
+    initializeProduct();
+  }, [stateProduct, stateQuantity, stateSelectedSize, stateSelectedColor, location.search, navigate]);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleQuantityChange = (e) => {
+    const newQuantity = parseInt(e.target.value) || 1;
+    setQuantity(Math.max(1, newQuantity));
+  };
+
+  const handleSizeChange = (e) => {
+    setSelectedSize(e.target.value);
+  };
+
+  const handleColorChange = (e) => {
+    setSelectedColor(e.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -153,6 +199,86 @@ const BuyNow = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-serif font-light text-gray-900 mb-8">Buy Now - Express Checkout</h1>
+
+        {/* Product Selection */}
+        {product && (
+          <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
+            <h2 className="text-lg font-medium text-gray-900 mb-4">Product Details</h2>
+            <div className="flex items-start space-x-4">
+              <img
+                src={product.images?.[0]?.url || '/placeholder-product.jpg'}
+                alt={product.name}
+                className="w-20 h-20 object-cover rounded-lg"
+              />
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900">{product.name}</h3>
+                <p className="text-sm text-gray-600 mb-4">{product.description}</p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Quantity Selection */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={quantity}
+                      onChange={handleQuantityChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    />
+                  </div>
+
+                  {/* Size Selection */}
+                  {product.sizes && product.sizes.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Size</label>
+                      <select
+                        value={selectedSize}
+                        onChange={handleSizeChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                      >
+                        {product.sizes.map((size) => (
+                          <option key={size} value={size}>{size}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Color Selection */}
+                  {product.colors && product.colors.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+                      <select
+                        value={selectedColor}
+                        onChange={handleColorChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+                      >
+                        {product.colors.map((color) => (
+                          <option key={color} value={color}>{color}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    Price: <span className="font-medium text-gray-900">
+                      ${product.discountPrice || product.salePrice || product.price}
+                    </span>
+                    {(product.discountPrice || product.salePrice) && (
+                      <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
+                        {Math.round((((product.originalPrice || product.price) - (product.discountPrice || product.salePrice)) / (product.originalPrice || product.price)) * 100)}% OFF
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-lg font-semibold text-gray-900">
+                    Total: ${((product.discountPrice || product.salePrice || product.price) * quantity).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Checkout Form */}

@@ -14,7 +14,10 @@ import {
   AlertTriangle,
   Package,
   DollarSign,
-  Archive
+  Archive,
+  Link,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -34,6 +37,9 @@ const AdminProducts = () => {
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [showBuyNowModal, setShowBuyNowModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [buyNowLink, setBuyNowLink] = useState('');
 
   const itemsPerPage = 10;
 
@@ -158,6 +164,28 @@ const AdminProducts = () => {
       console.error('Restore product error:', error);
       toast.error('Failed to restore product');
     }
+  };
+
+  const generateBuyNowLink = (product) => {
+    const baseUrl = window.location.origin;
+    const buyNowUrl = `${baseUrl}/buy-now?product=${product._id}`;
+    setSelectedProduct(product);
+    setBuyNowLink(buyNowUrl);
+    setShowBuyNowModal(true);
+  };
+
+  const copyBuyNowLink = async () => {
+    try {
+      await navigator.clipboard.writeText(buyNowLink);
+      toast.success('Buy Now link copied to clipboard!');
+    } catch (error) {
+      console.error('Copy error:', error);
+      toast.error('Failed to copy link');
+    }
+  };
+
+  const openBuyNowLink = () => {
+    window.open(buyNowLink, '_blank');
   };
 
   const formatCurrency = (amount) => {
@@ -440,6 +468,13 @@ const AdminProducts = () => {
                           >
                             <Eye className="h-4 w-4" />
                           </Link>
+                          <button
+                            onClick={() => generateBuyNowLink(product)}
+                            className="text-green-600 hover:text-green-900"
+                            title="Generate Buy Now Link"
+                          >
+                            <Link className="h-4 w-4" />
+                          </button>
                           <Link
                             to={`/admin/products/${product._id}/edit`}
                             className="text-blue-600 hover:text-blue-900"
@@ -548,6 +583,101 @@ const AdminProducts = () => {
             </div>
           )}
         </div>
+
+        {/* Buy Now Link Modal */}
+        {showBuyNowModal && selectedProduct && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div className="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+              <div className="mt-3">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                    <Link className="h-5 w-5 mr-2 text-green-600" />
+                    Buy Now Link Generator
+                  </h3>
+                  <button
+                    onClick={() => {
+                      setShowBuyNowModal(false);
+                      setSelectedProduct(null);
+                      setBuyNowLink('');
+                    }}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <span className="sr-only">Close</span>
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="mb-6">
+                  <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                    <img
+                      src={selectedProduct.images?.[0]?.url || '/placeholder-product.svg'}
+                      alt={selectedProduct.name}
+                      className="h-16 w-16 object-cover rounded-lg"
+                    />
+                    <div>
+                      <h4 className="font-medium text-gray-900">{selectedProduct.name}</h4>
+                      <p className="text-sm text-gray-600">{formatCurrency(selectedProduct.price)}</p>
+                      <p className="text-xs text-gray-500">Stock: {selectedProduct.totalStock}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Direct Buy Now Link
+                  </label>
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={buyNowLink}
+                      readOnly
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm font-mono"
+                    />
+                    <button
+                      onClick={copyBuyNowLink}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      <span>Copy</span>
+                    </button>
+                    <button
+                      onClick={openBuyNowLink}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center space-x-2"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      <span>Open</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <h4 className="text-sm font-medium text-blue-900 mb-2">How to use this link:</h4>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• Share this link with customers for direct purchase</li>
+                    <li>• Customers will be taken directly to the buy now page</li>
+                    <li>• Product will be pre-selected with default size and color</li>
+                    <li>• Link works on all devices and platforms</li>
+                  </ul>
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <button
+                    onClick={() => {
+                      setShowBuyNowModal(false);
+                      setSelectedProduct(null);
+                      setBuyNowLink('');
+                    }}
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Delete Confirmation Modal */}
         {showDeleteModal && productToDelete && (
