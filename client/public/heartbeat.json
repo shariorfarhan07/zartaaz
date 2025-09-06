@@ -1,0 +1,12 @@
+{
+  "status": "alive",
+  "service": "zartaaz-frontend",
+  "version": "1.0.0",
+  "timestamp": "2024-01-01T00:00:00.000Z",
+  "environment": "development",
+  "endpoints": {
+    "heartbeat": "/heartbeat",
+    "health": "/health",
+    "api": "/api/heartbeat"
+  }
+}

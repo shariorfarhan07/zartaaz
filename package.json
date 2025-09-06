@@ -1,0 +1,19 @@
+{
+  "name": "zartaaz-ecommerce",
+  "version": "1.0.0",
+  "description": "Women's clothing eCommerce platform with minimalist design",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "keywords": ["ecommerce", "react", "nodejs", "mongodb", "women-clothing"],
+  "author": "Zartaaz Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
