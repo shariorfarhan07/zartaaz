@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import Heartbeat from './components/Heartbeat';
+import DeveloperInfo from './components/DeveloperInfo';
 
 // Pages
 import Home from './pages/Home';
@@ -42,13 +43,31 @@ import './App.css';
 // Layout wrapper component to conditionally render navbar and footer
 const Layout = ({ children }) => {
   const location = useLocation();
+  const [showDeveloperInfo, setShowDeveloperInfo] = useState(false);
   const isAdminRoute = location.pathname.startsWith('/admin');
+
+  // Check for Dev=doneBy query parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('Dev') === 'doneBy') {
+      setShowDeveloperInfo(true);
+    }
+  }, []);
+
+  const handleCloseDeveloperInfo = () => {
+    setShowDeveloperInfo(false);
+    // Remove the query parameter from URL
+    const url = new URL(window.location);
+    url.searchParams.delete('Dev');
+    window.history.replaceState({}, '', url);
+  };
 
   if (isAdminRoute) {
     // For admin routes, render without any wrapper - AdminLayout handles everything
     return (
       <div className="admin-app">
         {children}
+        {showDeveloperInfo && <DeveloperInfo onClose={handleCloseDeveloperInfo} />}
         <ToastContainer 
           position="top-right" 
           autoClose={3000}
@@ -73,6 +92,7 @@ const Layout = ({ children }) => {
         {children}
       </main>
       <Footer />
+      {showDeveloperInfo && <DeveloperInfo onClose={handleCloseDeveloperInfo} />}
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
